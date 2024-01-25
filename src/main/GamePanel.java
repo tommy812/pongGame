@@ -12,8 +12,7 @@ public class GamePanel extends JPanel{
     final int LEFTDOWN = 2;
     final int RIGHTUP=3;
     final int RIGHTDOWN=4;
-    final int DOWNRIGHT=5;
-    final int DOWNLEFT=6;
+
 
 
     //SCREEN SETTINGS
@@ -34,7 +33,8 @@ public class GamePanel extends JPanel{
 
 
     //Rectangles
-    private Rectangle topBorder, bottomBorder,centralLine,leftMargin,rightMargin, player,player2,ball;
+    private Rectangle topBorder, bottomBorder,centralLine,leftMargin,rightMargin,ball;
+    private Player player,player2;
     //labels
     JLabel leftScoreLabel= new JLabel("<html> 0 </html>");
     JLabel rightScoreLabel = new JLabel("<html> 0 </html>");
@@ -45,12 +45,10 @@ public class GamePanel extends JPanel{
     //set player default position
     int playerX = 0;
     int playerY = screenHeight/2;
-    int playerScore=0;
 
     int player2X = screenWidth-10;
     int player2Y = screenHeight/2;
-    int player2Score = 0;
-    int playerSpeed = 10;
+    int playerSpeed = 7;
 
     //set ball default position
     int ballHeight=10;
@@ -60,7 +58,7 @@ public class GamePanel extends JPanel{
     int ballSpeedx = 10;
     int ballSpeedy = 10;
     Random rand = new Random();
-    int ballDirection= 1;//rand.nextInt(2);
+    int ballDirection= rand.nextInt(1,2);
 
 
     public GamePanel(){
@@ -69,8 +67,8 @@ public class GamePanel extends JPanel{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
-        player = new Rectangle(playerX,playerY,10,tileSize*2);
-        player2 = new Rectangle(player2X,player2Y,10,tileSize*2);
+        player = new Player(playerX,playerY,10,tileSize);
+        player2 = new Player(player2X,player2Y,10,tileSize);
         topBorder = new Rectangle(0,0,screenWidth,tileSize/2);
         bottomBorder = new Rectangle(0,screenHeight-tileSize/2,screenWidth,tileSize/2);
         centralLine = new Rectangle(screenWidth/2,0,4,screenHeight);
@@ -85,16 +83,16 @@ public class GamePanel extends JPanel{
     public void update(){
         //animate first player
         if (keyH.wPressed){
-            if (!player.intersects(topBorder)) {
-                playerY -= playerSpeed;
+            if (!player.area.intersects(topBorder)) {
+                player.y -= player.speed;
             }else {
                 System.out.println("top hit by p1");
             }
 
         }
         if (keyH.sPressed){
-            if(!player.intersects(bottomBorder)){
-                playerY += playerSpeed;
+            if(!player.area.intersects(bottomBorder)){
+                player.y += player.speed;
             }else {
                 System.out.println("bottom hit by p1");
             }
@@ -110,8 +108,8 @@ public class GamePanel extends JPanel{
                     ballX = screenWidth/2;
                     ballY = screenHeight/2;
                     ballDirection=rand.nextInt(3,4);
-                    playerScore++;
-                } else if (ball.intersects(player)) {
+                    player.score++;
+                } else if (ball.intersects(player.area)) {
                     //if()
                     ballDirection=RIGHTUP;
 
@@ -128,8 +126,8 @@ public class GamePanel extends JPanel{
                     ballX = screenWidth/2;
                     ballY = screenHeight/2;
                     ballDirection= rand.nextInt(3,4);
-                    playerScore++;
-                } else if (ball.intersects(player)) {
+                    player.score++;
+                } else if (ball.intersects(player.area)) {
                     //if()
                     ballDirection=RIGHTDOWN;
                 } else if (ball.intersects(bottomBorder)){
@@ -144,9 +142,9 @@ public class GamePanel extends JPanel{
                 if(ball.intersects(rightMargin)){
                     ballX = screenWidth/2;
                     ballY = screenHeight/2;
-                    ballDirection= rand.nextInt(2);
-                    player2Score++;
-                } else if (ball.intersects(player2)) {
+                    ballDirection= rand.nextInt(1,2);
+                    player2.score++;
+                } else if (ball.intersects(player2.area)) {
                     ballDirection=LEFTUP;
                 } else if (ball.intersects(topBorder)){
                     ballDirection = RIGHTDOWN;
@@ -159,9 +157,9 @@ public class GamePanel extends JPanel{
                 if(ball.intersects(rightMargin)){
                     ballX = screenWidth/2;
                     ballY = screenHeight/2;
-                    ballDirection= rand.nextInt(2);
-                    player2Score++;
-                } else if (ball.intersects(player2)) {
+                    ballDirection= rand.nextInt(1,2);
+                    player2.score++;
+                } else if (ball.intersects(player2.area)) {
                     ballDirection=LEFTDOWN;
                 } else if (ball.intersects(bottomBorder)){
                     ballDirection = RIGHTUP;
@@ -175,14 +173,14 @@ public class GamePanel extends JPanel{
 
 
         //animate the second player
-        if (!player2.intersects(topBorder)){
-            if (ballY<player2Y){
-                player2Y -= playerSpeed;
+        if (!player2.area.intersects(topBorder)){
+            if (ballY<player2.y){
+                player2.y -= playerSpeed;
             }
         }
-        if (!player2.intersects((bottomBorder))){
-            if (ballY>player2Y){
-                player2Y += playerSpeed;
+        if (!player2.area.intersects((bottomBorder))){
+            if (ballY>player2.y){
+                player2.y += playerSpeed;
             }
         }
 
@@ -205,13 +203,13 @@ public class GamePanel extends JPanel{
         Graphics2D g2 = (Graphics2D)g;
 
         g2.setColor(Color.white);
-        player = new Rectangle(playerX,playerY,10,tileSize*2);
-        player2 = new Rectangle(player2X,player2Y,10,tileSize*2);
         ball = new Rectangle(ballX,ballY,ballWidth,ballHeight);
 
         //players
-        g2.fillRect(playerX,playerY,10,tileSize*2);
-        g2.fillRect(player2X,player2Y,10,tileSize*2);
+        player.setRect();
+        g2.fillRect(player.x,player.y,player.width,player.height);
+        player2.setRect();
+        g2.fillRect(player2.x,player2.y,player.width,player.height);
 
         //borders
         g2.fillRect(topBorder.x, topBorder.y, topBorder.width, topBorder.height);
@@ -227,14 +225,14 @@ public class GamePanel extends JPanel{
 
 
         //TODO: change 0 to a score variable.
-        leftScoreLabel.setText("<html>"+playerScore+"</html>");
+        leftScoreLabel.setText("<html>"+player2.score+"</html>");
         leftScoreLabel.setForeground(Color.white);
         leftScoreLabel.setVisible(true);
         leftScoreLabel.setLocation((screenWidth/2) - tileSize,tileSize*2);
         leftScoreLabel.setSize(tileSize , tileSize);
         leftScoreLabel.setFont(new Font("Serif", Font.PLAIN, tileSize));
         add(leftScoreLabel);
-        rightScoreLabel.setText("<html>"+player2Score+"</html>");
+        rightScoreLabel.setText("<html>"+player.score+"</html>");
         rightScoreLabel.setForeground(Color.white);
         rightScoreLabel.setVisible(true);
         rightScoreLabel.setLocation((screenWidth/2) + tileSize/2,tileSize*2);
