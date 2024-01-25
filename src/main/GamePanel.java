@@ -33,8 +33,9 @@ public class GamePanel extends JPanel{
 
 
     //Rectangles
-    private Rectangle topBorder, bottomBorder,centralLine,leftMargin,rightMargin,ball;
-    private Player player,player2;
+    private final Rectangle topBorder, bottomBorder,centralLine,leftMargin,rightMargin;
+    private Rectangle ball;
+    private final Player player,player2;
     //labels
     JLabel leftScoreLabel= new JLabel("<html> 0 </html>");
     JLabel rightScoreLabel = new JLabel("<html> 0 </html>");
@@ -102,73 +103,70 @@ public class GamePanel extends JPanel{
 
 
         //animate the ball
-        switch(ballDirection){
-            case (LEFTUP):
-                if(ball.intersects(leftMargin)){
-                    ballX = screenWidth/2;
-                    ballY = screenHeight/2;
-                    ballDirection=rand.nextInt(3,4);
+        switch (ballDirection) {
+            case (LEFTUP) -> {
+                if (ball.intersects(leftMargin)) {
+                    ballX = screenWidth / 2;
+                    ballY = screenHeight / 2;
+                    ballDirection = rand.nextInt(3, 4);
                     player.score++;
                 } else if (ball.intersects(player.area)) {
                     //if()
-                    ballDirection=RIGHTUP;
-
-                } else if (ball.intersects(topBorder)){
-                    ballDirection=LEFTDOWN;
-                }
-                    else {
-                    ballX -= ballSpeedx;
-                    ballY -= ballSpeedy;
-                }
-                break;
-            case (LEFTDOWN):
-                if(ball.intersects(leftMargin)){
-                    ballX = screenWidth/2;
-                    ballY = screenHeight/2;
-                    ballDirection= rand.nextInt(3,4);
-                    player.score++;
-                } else if (ball.intersects(player.area)) {
-                    //if()
-                    ballDirection=RIGHTDOWN;
-                } else if (ball.intersects(bottomBorder)){
-                    ballDirection = LEFTUP;
-                }
-                else {
-                    ballX -= ballSpeedx;
-                    ballY += ballSpeedy;
-                }
-                break;
-            case(RIGHTUP):
-                if(ball.intersects(rightMargin)){
-                    ballX = screenWidth/2;
-                    ballY = screenHeight/2;
-                    ballDirection= rand.nextInt(1,2);
-                    player2.score++;
-                } else if (ball.intersects(player2.area)) {
-                    ballDirection=LEFTUP;
-                } else if (ball.intersects(topBorder)){
-                    ballDirection = RIGHTDOWN;
-                }else {
-                    ballX += ballSpeedx;
-                    ballY -= ballSpeedy;
-                }
-                break;
-            case(RIGHTDOWN):
-                if(ball.intersects(rightMargin)){
-                    ballX = screenWidth/2;
-                    ballY = screenHeight/2;
-                    ballDirection= rand.nextInt(1,2);
-                    player2.score++;
-                } else if (ball.intersects(player2.area)) {
-                    ballDirection=LEFTDOWN;
-                } else if (ball.intersects(bottomBorder)){
                     ballDirection = RIGHTUP;
-                }else {
+
+                } else if (ball.intersects(topBorder)) {
+                    ballDirection = LEFTDOWN;
+                } else {
+                    ballX -= ballSpeedx;
+                    ballY -= ballSpeedy;
+                }
+            }
+            case (LEFTDOWN) -> {
+                if (ball.intersects(leftMargin)) {
+                    ballX = screenWidth / 2;
+                    ballY = screenHeight / 2;
+                    ballDirection = rand.nextInt(3, 4);
+                    player.score++;
+                } else if (ball.intersects(player.area)) {
+                    //if()
+                    ballDirection = RIGHTDOWN;
+                } else if (ball.intersects(bottomBorder)) {
+                    ballDirection = LEFTUP;
+                } else {
+                    ballX -= ballSpeedx;
+                    ballY += ballSpeedy;
+                }
+            }
+            case (RIGHTUP) -> {
+                if (ball.intersects(rightMargin)) {
+                    ballX = screenWidth / 2;
+                    ballY = screenHeight / 2;
+                    ballDirection = rand.nextInt(1, 2);
+                    player2.score++;
+                } else if (ball.intersects(player2.area)) {
+                    ballDirection = LEFTUP;
+                } else if (ball.intersects(topBorder)) {
+                    ballDirection = RIGHTDOWN;
+                } else {
+                    ballX += ballSpeedx;
+                    ballY -= ballSpeedy;
+                }
+            }
+            case (RIGHTDOWN) -> {
+                if (ball.intersects(rightMargin)) {
+                    ballX = screenWidth / 2;
+                    ballY = screenHeight / 2;
+                    ballDirection = rand.nextInt(1, 2);
+                    player2.score++;
+                } else if (ball.intersects(player2.area)) {
+                    ballDirection = LEFTDOWN;
+                } else if (ball.intersects(bottomBorder)) {
+                    ballDirection = RIGHTUP;
+                } else {
                     ballX += ballSpeedx;
                     ballY += ballSpeedy;
                 }
-                break;
-
+            }
         }
 
 
